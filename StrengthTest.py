@@ -5,7 +5,8 @@ import string
 import re
 class StrengthTest:
     """Holds the rules for a password check"""
-    def __init__(self, minLength, maxLength, specialChars = None):
+    def __init__(self, minLength, maxLength, requires, specialChars = None):
+        self.requires = requires #dictionary with bool values
         self.minLength = int(minLength) #int
         self.maxLength = int(maxLength) #int
         self.length = 0
@@ -69,10 +70,12 @@ class StrengthTest:
     def __capitalCount(self, password):
         tempScore = sum(1 for char in password if char.isupper())
         if tempScore < 1:
-            self.viable = False
+            if self.requires['reqCap']:
+                self.viable = False
             self.notes += 'password must contain at least 1 uppercase letter, '
         elif tempScore == self.length:
-            self.viable = False
+            if self.requires['reqLow']:
+                self.viable = False
             self.notes += 'password must contain at least 1 lowercase letter, '
         else:
             self.score += tempScore
@@ -80,10 +83,12 @@ class StrengthTest:
     def __numberCount(self, password):
         tempScore = sum(1 for char in password if char.isdigit())
         if tempScore < 1:
-            self.viable = False
+            if self.requires['reqNum']:
+                self.viable = False
             self.notes += 'password must contain at least 1 number, '
         elif tempScore == self.length:
-            self.viable = False
+            if self.requires['reqNum']:
+                self.viable = False
             self.notes += 'password cannot be all numbers, '
         else:
             self.score += tempScore
@@ -91,11 +96,13 @@ class StrengthTest:
     #additional points for each special character used        
     def __specialCount(self, password):
         tempScore = sum(1 for char in password if (char in self.special))*2
-        if tempScore < 2:
-            self.viable = False
+        if tempScore < 2:       
+            if self.requires['reqSpec']:
+                self.viable = False
             self.notes += 'password must contain at least 1 special character, '
         elif tempScore == self.length*2:
-            self.viable = False
+            if self.requires['reqSpec']:
+                self.viable = False
             self.notes += 'password cannot be all special characters, '
         else:
             self.score += tempScore
@@ -126,7 +133,7 @@ class StrengthTest:
         password = None
         #return results as dictonary
         return {'password': '*' * self.length,
-                'score': self.score,
+                'score': round(self.score,2),
                 'viable': self.viable,
                 'notes': self.notes[:-2],
                 'max': self.max,
@@ -144,5 +151,5 @@ class StrengthTest:
         self.__illegalCharacter(password)
         if self.special != None and len(self.special) > 0:
             self.__specialCount(password)
-        return self.score
+        return round(self.score,2)
     

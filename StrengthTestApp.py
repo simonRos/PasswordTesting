@@ -2,6 +2,7 @@
 #Simon Rosner
 #5/25/2017
 
+import os
 import os.path
 from StrengthTest import StrengthTest
 
@@ -23,6 +24,7 @@ def operations():
     minLen = 0
     maxLen = 0
     specChar = None
+    requires = {}
     file = open(settings,'r')
     for line in file:
         spot = line.find(':') + 1
@@ -30,14 +32,23 @@ def operations():
             minLen = line[spot:]
         elif 'maxLength: ' in line:
             maxLen = line[spot:]
+        elif 'reqCap: ' in line:
+            requires['reqCap'] = line[spot:]
+        elif 'reqLow: ' in line:
+            requires['reqLow'] = line[spot:]
+        elif 'reqNum: ' in line:
+            requires['reqNum'] = line[spot:]
+        elif 'reqSpec: ' in line:
+            requires['reqSpec'] = line[spot:]
         elif 'special: ' in line:
             specChar = line[spot:].rstrip()
         elif 'DONE' in line:
             break;        
     file.close()
 
-    test = StrengthTest(minLen, maxLen, specChar)
+    test = StrengthTest(minLen, maxLen, requires, specChar)
     results = test.evaluate(input("Please enter your password: "))
+    os.system('cls' if os.name=='nt' else 'clear')
     outputInfo(results)
     
 def outputInfo(results):
