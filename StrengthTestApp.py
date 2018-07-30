@@ -8,14 +8,22 @@ from StrengthTest import StrengthTest
 
 settings = 'settings.txt'
 
-def prompt():
-    response = input("Would you like to run the test now?[Yes/No] ")
+def prompt(again=None):
+    yesno = " [Yes/No] "
+    ask = ""
+    if again == None:
+        ask = "Would you like to run the test now?" + yesno
+    else:
+        ask = "Would you like to run the test again?" + yesno
+    response = input(ask)
     if response[0].lower() == 'y':
         operations()
     elif response[0].lower() == 'n':
-        response = input("Would you like to reconfigure the test settings?[Yes/No] ")
+        ask = "Would you like to reconfigure the test settings?" + yesno
+        response = input(ask)
         if response[0].lower() == 'y':
             import Setup
+            prompt()
             return
     else:
         prompt()
@@ -25,31 +33,32 @@ def operations():
     maxLen = 0
     specChar = None
     requires = {}
-    file = open(settings,'r')
-    for line in file:
-        spot = line.find(':') + 1
-        if 'minLength: ' in line:
-            minLen = line[spot:]
-        elif 'maxLength: ' in line:
-            maxLen = line[spot:]
-        elif 'reqCap: ' in line:
-            requires['reqCap'] = line[spot:]
-        elif 'reqLow: ' in line:
-            requires['reqLow'] = line[spot:]
-        elif 'reqNum: ' in line:
-            requires['reqNum'] = line[spot:]
-        elif 'reqSpec: ' in line:
-            requires['reqSpec'] = line[spot:]
-        elif 'special: ' in line:
-            specChar = line[spot:].rstrip()
-        elif 'DONE' in line:
-            break;        
-    file.close()
+    #read settings file
+    with open(settings,'r') as file:
+        for line in file:
+            spot = line.find(':') + 1
+            if 'minLength: ' in line:
+                minLen = line[spot:]
+            elif 'maxLength: ' in line:
+                maxLen = line[spot:]
+            elif 'reqCap: ' in line:
+                requires['reqCap'] = int(line[spot:])
+            elif 'reqLow: ' in line:
+                requires['reqLow'] = int(line[spot:])
+            elif 'reqNum: ' in line:
+                requires['reqNum'] = int(line[spot:])
+            elif 'reqSpec: ' in line:
+                requires['reqSpec'] = int(line[spot:])
+            elif 'special: ' in line:
+                specChar = line[spot:].rstrip()
+            elif 'DONE' in line:
+                break;        
 
     test = StrengthTest(minLen, maxLen, requires, specChar)
     results = test.evaluate(input("Please enter your password: "))
     os.system('cls' if os.name=='nt' else 'clear')
     outputInfo(results)
+    prompt(True)
     
 def outputInfo(results):
     print("Your password, "

@@ -10,6 +10,7 @@ class StrengthTest:
         self.minLength = int(minLength) #int
         self.maxLength = int(maxLength) #int
         self.length = 0
+        #TODO: refactor maxScore stuff into own method
         pointHeavy = ""
         #should be an array of chars
         if specialChars == None or len(specialChars) <= 0:
@@ -26,8 +27,9 @@ class StrengthTest:
         self.notes = ""
         #calculate max
         self.max = self.__evaluate("Zz1" + pointHeavy[:-3])
-    #Evaluates password length
+    
     def __testLength(self, password):
+        """Evaluates password length"""
         lengthRange = self.maxLength - self.minLength
         if self.length < self.minLength or self.maxLength < self.length:
             #autofail. No points awarded.
@@ -47,8 +49,9 @@ class StrengthTest:
             #longer passwords get a small score boost
             self.score += 1.5*(self.length - lengthRange)
             self.score += lengthRange/2
-    #more points go to more rare letters
+    
     def __letterRarity(self, password):
+        """more points go to more rare letters"""
         letterVal = {'z' : 1.2,
                      'q' : 0.9,
                      'x' : 0.8,
@@ -66,44 +69,45 @@ class StrengthTest:
             if char in letterVal:
                 self.score += letterVal[char]
             
-    #additional points for each capital letter
     def __capitalCount(self, password):
+        """additional points for each capital letter"""
         tempScore = sum(1 for char in password if char.isupper())
         if tempScore < 1:
-            if self.requires['reqCap']:
+            if self.requires['reqCap'] == True:
                 self.viable = False
-            self.notes += 'password must contain at least 1 uppercase letter, '
+                self.notes += 'password must contain at least 1 uppercase letter, '
         elif tempScore == self.length:
-            if self.requires['reqLow']:
+            if self.requires['reqLow'] == True:
                 self.viable = False
-            self.notes += 'password must contain at least 1 lowercase letter, '
+                self.notes += 'password must contain at least 1 lowercase letter, '
         else:
             self.score += tempScore
-    #additional points for each number character used
+    
     def __numberCount(self, password):
+        """additional points for each number character used"""
         tempScore = sum(1 for char in password if char.isdigit())
         if tempScore < 1:
-            if self.requires['reqNum']:
+            if self.requires['reqNum'] == True:
                 self.viable = False
-            self.notes += 'password must contain at least 1 number, '
+                self.notes += 'password must contain at least 1 number, '
         elif tempScore == self.length:
-            if self.requires['reqNum']:
+            if self.requires['reqNum'] == True:
                 self.viable = False
-            self.notes += 'password cannot be all numbers, '
+                self.notes += 'password cannot be all numbers, '
         else:
             self.score += tempScore
-
-    #additional points for each special character used        
+        
     def __specialCount(self, password):
+        """additional points for each special character used"""
         tempScore = sum(1 for char in password if (char in self.special))*2
         if tempScore < 2:       
-            if self.requires['reqSpec']:
+            if self.requires['reqSpec'] == True:
                 self.viable = False
-            self.notes += 'password must contain at least 1 special character, '
+                self.notes += 'password must contain at least 1 special character, '
         elif tempScore == self.length*2:
-            if self.requires['reqSpec']:
+            if self.requires['reqSpec'] == True:
                 self.viable = False
-            self.notes += 'password cannot be all special characters, '
+                self.notes += 'password cannot be all special characters, '
         else:
             self.score += tempScore
     def __illegalCharacter(self, password):

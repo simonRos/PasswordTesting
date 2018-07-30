@@ -11,35 +11,35 @@ with open('settings.txt','w+') as file:
                + input("What is the maximum password length? ")
                + "\n")
     file.write("reqCap: ")
-    reqCaps = input("Require uppercase letter?")
+    reqCaps = input("Require uppercase letter? ")
     if reqCaps[0].lower() == 'y':
-        file.write("True\n")
+        file.write("1\n")
     elif reqCaps[0].lower() == 'n':
-        file.write("False\n")
+        file.write("0\n")
     else:
         file.write("\n")
     file.write("reqLow: ")
-    reqLow = input("Require lowercase letter?")
+    reqLow = input("Require lowercase letter? ")
     if reqLow[0].lower() == 'y':
-        file.write("True\n")
+        file.write("1\n")
     elif reqLow[0].lower() == 'n':
-        file.write("False\n")
+        file.write("0\n")
     else:
         file.write("\n")
     file.write("reqNum: ")
-    reqNum = input("Require numbers?")
+    reqNum = input("Require numbers? ")
     if reqNum[0].lower() == 'y':
-        file.write("True\n")
+        file.write("1\n")
     elif reqNum[0].lower() == 'n':
-        file.write("False\n")
+        file.write("0\n")
     else:
         file.write("\n")
     file.write("reqSpec: ")
-    reqSpec = input("Require special characters?")
+    reqSpec = input("Require special characters? ")
     if reqSpec[0].lower() == 'y':
-        file.write("True\n")
+        file.write("1\n")
     elif reqSpec[0].lower() == 'n':
-        file.write("False\n")
+        file.write("0\n")
     else:
         file.write("\n")
     print ("Enter allowed special characters.")
